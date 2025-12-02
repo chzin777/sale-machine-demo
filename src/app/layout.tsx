@@ -2,6 +2,7 @@
 
 import Header from "../components/header";
 import Logo from "../../components/Logo";
+import DemoBanner from "../components/DemoBanner";
 import { LoadingProvider, useLoading } from "../components/LoadingContext";
 import { DataProvider } from "../components/DataProvider";
 import { ServiceWorkerProvider } from "../components/ServiceWorkerProvider";
@@ -69,28 +70,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
 function LayoutContent({ children }: { children: React.ReactNode }) {
 	const { isLoading, progress } = useLoading();
-	// Garante que userName e userConta sejam sempre lidos do storage
-	useEffect(() => {
-		if (typeof window !== "undefined") {
-			let user = localStorage.getItem("user");
-			if (!user) user = sessionStorage.getItem("user");
-			if (user) {
-				try {
-					const parsed = JSON.parse(user);
-					// Verificar se é o objeto completo com 'user' aninhado ou direto
-					const userData = parsed.user || parsed;
-					setUserName(userData.name || userData.nome ? String(userData.name || userData.nome) : undefined);
-					setUserConta(userData.role || userData.conta ? String(userData.role || userData.conta) : undefined);
-				} catch {
-					setUserName(undefined);
-					setUserConta(undefined);
-				}
-			} else {
-				setUserName(undefined);
-				setUserConta(undefined);
-			}
-		}
-	}, []);
+	
+	// 🎭 MODO DEMONSTRAÇÃO - Usuário fictício sempre ativo
+	const userName = "Usuário Demo";
+	const userConta = "GESTOR_MASTER";
+	
 	const [sidebarOpen, setSidebarOpen] = useState(false);
 	const sidebarRef = useRef<HTMLDivElement>(null);
 	
@@ -98,10 +82,7 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
 		setSidebarOpen(prev => !prev);
 	}, []);
 	const pathname = usePathname();
-	const [userName, setUserName] = useState<string | undefined>(undefined);
-	const [userConta, setUserConta] = useState<string | undefined>(undefined);
 	const [isClient, setIsClient] = useState(false);
-	const isLoginPage = pathname === "/login" || pathname === "/redefinir-senha" || pathname === "/esqueci-senha" || pathname === "/nova-senha";
 
 	useEffect(() => {
 		setIsClient(true);
@@ -109,28 +90,29 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
 
 	return (
 		<>
+			{/* Demo Banner - Canto inferior esquerdo */}
+			<DemoBanner />
+			
 			{/* Progress Bar Global */}
 			<ProgressBar isLoading={isLoading} progress={progress} />
 			
 			<div className="flex min-h-screen w-full relative overflow-x-hidden" style={{ minHeight: '100vh' }}>
-					   {/* Removido background DarkVeil/SimpleDarkVeil para tema branco */}
 					   {/* Sidebar Desktop - UI Profissional */}
-					   {!isLoginPage && (
-						   <aside
-							   ref={sidebarRef}
-							   className={`hidden sm:flex fixed left-0 top-0 h-screen ${sidebarOpen ? "w-64" : "w-20"} flex-col py-6 px-2 shadow-xl z-40 sidebar-transition`}
-							   aria-label="Menu lateral"
-							   style={{
-								   backgroundColor: '#003153',
-								   boxShadow: sidebarOpen ? "4px 0 32px 0 rgba(0,0,0,0.13)" : undefined,
-								   height: '100vh',
-								   maxHeight: '100vh',
-								   borderRight: '4px solid #003153',
-								   transition: 'width 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-								   willChange: 'width',
-								   transform: 'translateZ(0)'
-							   }}
-						   >
+					   <aside
+						   ref={sidebarRef}
+						   className={`hidden sm:flex fixed left-0 top-0 h-screen ${sidebarOpen ? "w-64" : "w-20"} flex-col py-6 px-2 shadow-xl z-40 sidebar-transition`}
+						   aria-label="Menu lateral"
+						   style={{
+							   backgroundColor: '#003153',
+							   boxShadow: sidebarOpen ? "4px 0 32px 0 rgba(0,0,0,0.13)" : undefined,
+							   height: '100vh',
+							   maxHeight: '100vh',
+							   borderRight: '4px solid #003153',
+							   transition: 'width 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+							   willChange: 'width',
+							   transform: 'translateZ(0)'
+						   }}
+					   >
 							   {/* Barra de destaque */}
 							   <div className="absolute left-0 top-0 h-full w-1.5 rounded-r-lg" style={{ opacity: 0.85, backgroundColor: 'rgba(255,255,255,0.2)' }} />
 							   {/* Logo e avatar */}
@@ -238,14 +220,11 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
 								   })}
 							   </nav>
 							   {/* Divider */}
-							   {/* Divider */}
 							   <div className="my-4 border-t" style={{ borderColor: 'rgba(255, 255, 255, 0.2)' }} />
 						   </aside>
-					   )}
 
 					{/* Menu Mobile */}
-					{!isLoginPage && (
-						<div className="sm:hidden fixed top-0 left-0 w-full z-50">
+					<div className="sm:hidden fixed top-0 left-0 w-full z-50">
 							<div className="flex items-center justify-between bg-gray-50/95 backdrop-blur-md px-3 py-3 shadow-lg border-b border-gray-200/50">
 								<button
 									className="flex items-center gap-2 focus:outline-none hover:cursor-pointer p-2 rounded-lg transition-colors"
@@ -392,41 +371,37 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
 												</svg>
 												Feedback
 											</a>
-											<button onClick={() => { localStorage.removeItem('user'); window.location.href = '/login'; }} className="flex items-center gap-3 w-full text-left px-4 py-3 text-sm rounded-lg transition-colors hover:cursor-pointer mt-2" style={{ color: '#ff6b6b' }} onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#ff6b6b'; e.currentTarget.style.color = 'white'; const icon = e.currentTarget.querySelector('svg'); if (icon) icon.style.color = 'white'; }} onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = ''; e.currentTarget.style.color = '#ff6b6b'; const icon = e.currentTarget.querySelector('svg'); if (icon) icon.style.color = '#ff6b6b'; }}>
+											<button onClick={() => { window.location.href = '/'; }} className="flex items-center gap-3 w-full text-left px-4 py-3 text-sm rounded-lg transition-colors hover:cursor-pointer mt-2" style={{ color: '#ff6b6b' }} onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#ff6b6b'; e.currentTarget.style.color = 'white'; const icon = e.currentTarget.querySelector('svg'); if (icon) icon.style.color = 'white'; }} onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = ''; e.currentTarget.style.color = '#ff6b6b'; const icon = e.currentTarget.querySelector('svg'); if (icon) icon.style.color = '#ff6b6b'; }}>
 												<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-													<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+													<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
 												</svg>
-												Sair
+												Reiniciar Demo
 											</button>
 										</div>
 									</div>
 								</>
 							)}
 						</div>
-					)}
+					
 					{/* Main content */}
 					<div
-						className={`relative flex-1 flex flex-col min-h-screen w-full min-w-0 transition-all duration-300 overflow-x-hidden z-0
-									${!isLoginPage ? (sidebarOpen ? 'sm:pl-64' : 'sm:pl-16') : ''}`}
+						className={`relative flex-1 flex flex-col min-h-screen w-full min-w-0 transition-all duration-300 overflow-x-hidden z-0 ${sidebarOpen ? 'sm:pl-64' : 'sm:pl-16'}`}
 						style={{ background: 'transparent', backgroundColor: 'transparent' }}
 					>
-						{/* Header fixo no topo do conteúdo, exceto na página de login */}
-						{!isLoginPage && isClient && (
+						{/* Header fixo no topo do conteúdo */}
+						{isClient && (
 							   <Header userName={userName} />
 						)}
 						<main
-							className={`flex-1 overflow-y-auto overflow-x-hidden relative z-0 ${isLoginPage ? "p-0 bg-gradient-to-br from-gray-50 via-blue-50 to-white" : "pt-20 sm:pt-16 lg:pt-6 p-2 sm:p-4 lg:p-6 xl:p-8"
-								}`}
-							style={isLoginPage ? {} : { background: "transparent", backgroundColor: "transparent" }}
+							className="flex-1 overflow-y-auto overflow-x-hidden relative z-0 pt-20 sm:pt-16 lg:pt-6 p-2 sm:p-4 lg:p-6 xl:p-8"
+							style={{ background: "transparent", backgroundColor: "transparent" }}
 						>
 							{children}
 						</main>
-						{/* Rodapé "quieto" no fim da tela, fora do login */}
-						{!isLoginPage && (
-							<footer className="w-full text-center text-xs text-blue-900 bg-transparent py-2 select-none">
-								© 2025 Sales Machine
-							</footer>
-						)}
+						{/* Rodapé */}
+						<footer className="w-full text-center text-xs text-blue-900 bg-transparent py-2 select-none">
+							© 2025 Sales Machine - Versão Demo
+						</footer>
 					</div>
 				</div>
 		</>

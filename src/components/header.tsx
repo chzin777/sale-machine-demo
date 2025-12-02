@@ -29,9 +29,9 @@ export default function Header({ userName }: HeaderProps) {
   }, [menuOpen]);
 
   function handleLogout() {
+    // 🎭 MODO DEMO - Reiniciar página
     if (typeof window !== "undefined") {
-      localStorage.removeItem("user");
-      window.location.href = "/login";
+      window.location.href = "/";
     }
   }
 
@@ -78,7 +78,7 @@ export default function Header({ userName }: HeaderProps) {
                 <a href="/feedback" className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 transition-colors hover:cursor-pointer hover:bg-[#003153] hover:bg-opacity-5">Feedback</a>
               </li>
               <li>
-                <button onClick={handleLogout} className="w-full text-left block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 transition-colors hover:cursor-pointer hover:bg-[#003153] hover:bg-opacity-5">Sair</button>
+                <button onClick={handleLogout} className="w-full text-left block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 transition-colors hover:cursor-pointer hover:bg-[#003153] hover:bg-opacity-5">Reiniciar Demo</button>
               </li>
             </ul>
           </div>

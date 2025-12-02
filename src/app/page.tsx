@@ -1,7 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import DashboardHeader from "../components/DashboardHeader";
 import KpiCards from "../components/KpiCards";
 import GraficoReceitaMensal from "../components/GraficoReceitaMensal";
@@ -13,29 +12,11 @@ import RankingVendedores from "../components/RankingVendedores";
 import { useData } from "../components/DataProvider";
 import LoadingSpinner from "../components/LoadingSpinner";
 import ScopeIndicator from "../components/ScopeIndicator";
-import { getUserScopeFromStorage } from "../../lib/hierarchical-filters";
-import { hasPermission } from "../../lib/permissions";
 
 export default function Home() {
-  const router = useRouter();
   const data = useData();
-  const [canViewRanking, setCanViewRanking] = useState(false);
-
-  // Verificar autenticação
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const user = localStorage.getItem("user") || sessionStorage.getItem("user");
-      if (!user) {
-        router.replace("/login");
-      }
-      
-      // Verificar permissão para ver ranking
-      const userScope = getUserScopeFromStorage();
-      if (userScope) {
-        setCanViewRanking(hasPermission(userScope.role, 'VIEW_SELLER_RANKING'));
-      }
-    }
-  }, [router]);
+  // Em modo demo, sempre permitir visualizar ranking (GESTOR_MASTER)
+  const canViewRanking = true;
 
   if (data.loading) {
     return <LoadingSpinner size="full" text="Carregando dashboard..." />;

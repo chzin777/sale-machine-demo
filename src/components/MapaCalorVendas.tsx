@@ -248,52 +248,61 @@ export default function MapaCalorVendas({ vendasPorFilial = [] }: MapaCalorVenda
   const dadosPaginados = dadosVendas.slice((pagina - 1) * porPagina, pagina * porPagina);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Cards de estatísticas gerais */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3 lg:gap-4">
         {/* Receita Total */}
-        <GenericTiltedCard className="col-span-1">
-          <Card className="shadow-lg border border-green-200/60 bg-white h-full kpi-container">
-            <CardHeader className="flex flex-row items-start justify-between pb-1 pt-3 px-3 flex-shrink-0">
-              <CardTitle className="text-xs sm:text-sm md:text-base font-bold text-green-800 leading-tight w-full">Receita Total</CardTitle>
-            </CardHeader>
-            <CardContent className="kpi-content px-3 pt-2 pb-3">
-              <div className="font-extrabold tracking-tight text-green-800 flex items-center gap-1 sm:gap-2 kpi-number-responsive kpi-number">
-                <span className="text-[0.8em] flex-shrink-0">R$</span>
-                <span className="break-all" title={formatarMoeda(totalReceita)}>
-                  {totalReceita.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                </span>
+        <GenericTiltedCard>
+          <div className="shadow-lg bg-gradient-to-br from-green-500 to-green-600 kpi-uniform rounded-xl border-0">
+            <div className="kpi-header">
+              <h3 className="text-base font-bold text-white text-center leading-tight">Receita Total</h3>
+            </div>
+            <div className="kpi-content">
+              <div className="text-2xl font-extrabold text-white text-center kpi-number-uniform">
+                {loading ? (
+                  <div className="animate-pulse h-6 w-20 bg-white/20 rounded mx-auto" />
+                ) : (
+                  `R$ ${formatarNumero(totalReceita)}`
+                )}
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </GenericTiltedCard>
 
         {/* Total de Clientes */}
-        <GenericTiltedCard className="col-span-1">
-          <Card className="shadow-lg border bg-white h-full kpi-container" style={{ borderColor: 'rgba(0, 49, 83, 0.6)' }}>
-            <CardHeader className="flex flex-row items-start justify-between pb-1 pt-3 px-3 flex-shrink-0">
-              <CardTitle className="text-xs sm:text-sm md:text-base font-bold leading-tight w-full" style={{ color: '#003153' }}>Total de Clientes</CardTitle>
-            </CardHeader>
-            <CardContent className="kpi-content px-3 pt-2 pb-3">
-              <div className="font-extrabold tracking-tight kpi-number-responsive kpi-number" style={{ color: '#003153' }}>
-                {totalClientes.toLocaleString('pt-BR')}
+        <GenericTiltedCard>
+          <div className="shadow-lg bg-gradient-to-br from-blue-500 to-blue-600 kpi-uniform rounded-xl border-0">
+            <div className="kpi-header">
+              <h3 className="text-base font-bold text-white text-center leading-tight">Total de Clientes</h3>
+            </div>
+            <div className="kpi-content">
+              <div className="text-2xl font-extrabold text-white text-center kpi-number-uniform">
+                {loading ? (
+                  <div className="animate-pulse h-6 w-20 bg-white/20 rounded mx-auto" />
+                ) : (
+                  formatarNumero(totalClientes)
+                )}
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </GenericTiltedCard>
 
         {/* Total de Vendas */}
-        <GenericTiltedCard className="col-span-1">
-          <Card className="shadow-lg border border-purple-200/60 bg-white h-full kpi-container">
-            <CardHeader className="flex flex-row items-start justify-between pb-1 pt-3 px-3 flex-shrink-0">
-              <CardTitle className="text-xs sm:text-sm md:text-base font-bold text-purple-800 leading-tight w-full">Total de Vendas</CardTitle>
-            </CardHeader>
-            <CardContent className="kpi-content px-3 pt-2 pb-3">
-              <div className="font-extrabold tracking-tight text-purple-800 kpi-number-responsive kpi-number">
-                {totalVendas.toLocaleString('pt-BR')}
+        <GenericTiltedCard>
+          <div className="shadow-lg bg-gradient-to-br from-purple-500 to-purple-600 kpi-uniform rounded-xl border-0">
+            <div className="kpi-header">
+              <h3 className="text-base font-bold text-white text-center leading-tight">Total de Vendas</h3>
+            </div>
+            <div className="kpi-content">
+              <div className="text-2xl font-extrabold text-white text-center kpi-number-uniform">
+                {loading ? (
+                  <div className="animate-pulse h-6 w-20 bg-white/20 rounded mx-auto" />
+                ) : (
+                  formatarNumero(totalVendas)
+                )}
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </GenericTiltedCard>
       </div>
 

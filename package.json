@@ -1,6 +1,7 @@
 {
-  "name": "seller-machine",
-  "version": "0.1.0",
+  "name": "seller-machine-demo",
+  "version": "1.0.0-demo",
+  "description": "🎭 Versão de Demonstração - Dados Fictícios - Sem Autenticação",
   "private": true,
   "scripts": {
     "dev": "next dev -H 0.0.0.0",

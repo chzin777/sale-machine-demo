@@ -106,68 +106,21 @@ export default function RankingVendedores() {
   const goToNext = () => goToPage(currentPage + 1);
 
   useEffect(() => {
-    // Verificar permissão antes de carregar dados
-    const userScope = getUserScopeFromStorage();
-    const canViewRanking = userScope ? hasPermission(userScope.role, 'VIEW_SELLER_RANKING') : false;
-    setHasViewPermission(canViewRanking);
+    // 🎭 MODO DEMO - Carregar dados mockados
+    setHasViewPermission(true);
 
-    if (!canViewRanking) {
-      setLoading(false);
-      return;
-    }
-
-    async function fetchVendedores() {
+    async function loadMockData() {
       try {
         setLoading(true);
         
-        // Obter escopo do usuário e incluir nos headers
-        const userScope = getUserScopeFromStorage();
-        const scopeHeaders = userScope ? createScopeHeaders(userScope) : {};
+        // Importar dados mockados dinamicamente
+        const { mockRankingVendedores } = await import('../../lib/mock-data');
         
-        const response = await fetch('/api/vendedores', {
-          headers: {
-            'Content-Type': 'application/json',
-            ...scopeHeaders
-          }
-        });
+        // Simular delay de rede
+        await new Promise(resolve => setTimeout(resolve, 300));
         
-        if (!response.ok) {
-          throw new Error('Erro ao carregar dados dos vendedores');
-        }
-        
-        let data = await response.json();
-        
-        // 🔍 Aplicar filtros hierárquicos no frontend
-        if (userScope && Array.isArray(data)) {
-          console.log('🔍 Ranking - Filtrando vendedores. Role:', userScope.role);
-          console.log('🔍 Ranking - UserScope:', userScope);
-          console.log('🔍 Ranking - Total vendedores recebidos:', data.length);
-          
-          if (userScope.role === 'VENDEDOR') {
-            // Vendedor só vê a si mesmo
-            // Usar vendedorId (ID_Vendedor da tabela) se disponível, caso contrário userId
-            const vendedorIdToFilter = userScope.vendedorId || userScope.userId;
-            // Tentar múltiplos campos de ID para compatibilidade
-            data = data.filter(v => v.id === vendedorIdToFilter || v.ID_Vendedor === vendedorIdToFilter);
-            console.log(`🔍 Vendedor (ID: ${vendedorIdToFilter}) - Mostrando apenas o próprio: ${data.length} vendedor(es)`);
-          } else if (userScope.role === 'GESTOR_I') {
-            // Gestor I vê vendedores da sua filial
-            data = data.filter(v => v.filialId === userScope.filialId);
-            console.log(`🔍 Gestor I - Vendedores da filial ${userScope.filialId}: ${data.length}`);
-          } else if (userScope.role === 'GESTOR_II') {
-            // Gestor II vê vendedores da sua regional
-            data = data.filter(v => v.regionalId === userScope.regionalId);
-            console.log(`🔍 Gestor II - Vendedores da regional ${userScope.regionalId}: ${data.length}`);
-          } else if (userScope.role === 'GESTOR_III') {
-            // Gestor III vê vendedores da sua diretoria
-            data = data.filter(v => v.diretoriaId === userScope.diretoriaId);
-            console.log(`🔍 Gestor III - Vendedores da diretoria ${userScope.diretoriaId}: ${data.length}`);
-          }
-          // GESTOR_MASTER vê todos
-        }
-        
-        setVendedores(data);
-        setCurrentPage(1); // Reset para primeira página quando dados mudam
+        setVendedores(mockRankingVendedores);
+        setCurrentPage(1);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Erro desconhecido');
       } finally {
@@ -175,14 +128,14 @@ export default function RankingVendedores() {
       }
     }
 
-    fetchVendedores();
+    loadMockData();
   }, []);
 
   if (loading) {
     return <CardLoader text="Carregando ranking..." />;
   }
 
-  // Se não tem permissão, não exibir o componente
+  // Em modo demo, sempre mostrar o ranking
   if (!hasViewPermission) {
     return (
       <Card className="shadow-xl border border-gray-200/30 bg-white rounded-2xl overflow-hidden h-full">
